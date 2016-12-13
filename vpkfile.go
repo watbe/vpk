@@ -20,12 +20,12 @@ func ReadVPKFile(reader io.Reader) (*VPKFile, error) {
 
 	header, err := readHeader(r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in ReadVPKFile readHeader: %s", err)
 	}
 
 	fileTree, err := readTree(r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in ReadVPKFile readTree: %s", err)
 	}
 
 	return &VPKFile{

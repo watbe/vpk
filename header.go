@@ -60,13 +60,16 @@ func readHeader(reader io.Reader) (header, error) {
 		h_ := Header_v1{}
 		err = binary.Read(reader, binary.LittleEndian, &h_)
 		h = h_
+		fmt.Println("Version 1 VPK detected")
 	case 2:
 		h_ := Header_v2{}
 		err = binary.Read(reader, binary.LittleEndian, &h_)
 		h = h_
+		fmt.Println("Version 2 VPK detected")
 	default:
 		return nil, fmt.Errorf("Unknown version %d", start.Version)
 	}
+
 	if err != nil {
 		return nil, err
 	}

@@ -38,28 +38,40 @@ func readTree(reader *bufio.Reader) (map[string]map[string]map[string]*FileInfo,
 	for err == nil {
 		extension, err = readString(reader, &buf)
 		if extension == "" || err != nil {
+			if err != nil && err != io.EOF {
+				err = fmt.Errorf("error in extension readString: %s", err)
+			}
 			break
 		}
 
 		for err == nil {
 			path, err = readString(reader, &buf)
 			if path == "" || err != nil {
+				if err != nil && err != io.EOF {
+					err = fmt.Errorf("error in path readString: %s", err)
+				}
 				break
 			}
 
 			for err == nil {
 				filename, err = readString(reader, &buf)
 				if filename == "" || err != nil {
+					if err != nil && err != io.EOF {
+						err = fmt.Errorf("error in filename readString: %s", err)
+					}
 					break
 				}
 
 				err = readFileInfo(fileTree, extension, path, filename, reader)
+				if err != nil && err != io.EOF {
+					err = fmt.Errorf("error in readFileInfo: %s", err)
+				}
 			}
 		}
 	}
 
-	if err != nil {
-		return nil, err
+	if err != nil && err != io.EOF {
+		return nil, fmt.Errorf("error in readTree: %s", err)
 	}
 
 	return fileTree, nil
@@ -94,7 +106,7 @@ func readFileInfo(fileTree map[string]map[string]map[string]*FileInfo, extension
 	var info fileInfo
 	err := binary.Read(reader, binary.LittleEndian, &info)
 	if err != nil {
-		return err
+		return fmt.Errorf("error in readFileInfo binary.Read: %s", err)
 	}
 
 	var ok bool
@@ -129,7 +141,7 @@ func readFileInfo(fileTree map[string]map[string]map[string]*FileInfo, extension
 	if info.PreloadLength != 0 {
 		_, err := io.ReadFull(reader, (*pathTree[filename]).preload)
 		if err != nil {
-			return err
+			return fmt.Errorf("error in readFileInfo io.ReadFull: %s", err)
 		}
 	}
 
