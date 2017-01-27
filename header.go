@@ -27,10 +27,10 @@ func (h Header_v1) treeOffset() uint32 {
 
 type Header_v2 struct {
 	TreeLength   uint32
-	unknown1     uint32
+	Unknown1     uint32
 	FooterLength uint32
-	unknown2     uint32
-	unknown3     uint32
+	Unknown2     uint32
+	Unknown3     uint32
 }
 
 func (h Header_v2) treeOffset() uint32 {
